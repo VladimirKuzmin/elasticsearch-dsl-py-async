@@ -1,20 +1,25 @@
 import asyncio
+
+from elasticsearch_async import AsyncTransport
 from elasticsearch_dsl import search
 from elasticsearch_dsl.connections import connections
 
 
 class Search(search.Search):
-    @asyncio.coroutine
-    def execute_async(self, ignore_cache=False):
+    def execute_future(self):
         """
         Execute the search asynchronously and return an instance of ``Response`` wrapping all
         the data.
 
         :arg response_class: optional subclass of ``Response`` to use instead.
         """
-        if ignore_cache or not hasattr(self, '_response'):
-            es = connections.get_connection(self._using)
+        es = connections.get_connection(self._using)
+        transport = es.transport
+        assert isinstance(transport, AsyncTransport)
+        loop = transport.loop
 
+        @asyncio.coroutine
+        def coroutine():
             result = yield from es.search(
                 index=self._index,
                 doc_type=self._doc_type,
@@ -23,4 +28,5 @@ class Search(search.Search):
             )
 
             self._response = self._response_class(self, result)
-        return self._response
+
+        return asyncio.ensure_future(coroutine(), loop=loop)
