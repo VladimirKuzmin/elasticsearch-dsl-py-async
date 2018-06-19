@@ -17,7 +17,7 @@ class Search(search.Search):
 
             result = yield from es.search(
                 index=self._index,
-                doc_type=self._doc_type,
+                doc_type=self._get_doc_type() if hasattr(self, '_get_doc_type') else self._doc_type,
                 body=self.to_dict(),
                 **self._params
             )
