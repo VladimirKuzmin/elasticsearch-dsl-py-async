@@ -3,7 +3,7 @@ import sys
 from os.path import join, dirname
 from setuptools import setup, find_packages
 
-VERSION = (5, 0, 0, 'dev')
+VERSION = (6, 0, 0, 'dev')
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 
@@ -12,8 +12,8 @@ long_description = f.read().strip()
 f.close()
 
 install_requires = [
-    'elasticsearch-async>=5.0.0,<6.0.0',
-    'elasticsearch-dsl>=5.0.0,<6.0.0',
+    'elasticsearch-async>=5.0.0,<6.2.0',
+    'elasticsearch-dsl>=5.0.0,<6.2.0',
 ]
 
 if sys.version_info[:2] < (3, 4):
